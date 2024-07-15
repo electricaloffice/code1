@@ -1,0 +1,45 @@
+-- Place this script in StarterPlayerScripts as a LocalScript
+
+-- Function to create a name tag above a player's head
+local function createNameTag(character, playerName)
+    -- Create a BillboardGui for the name tag
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Adornee = character:WaitForChild("Head")
+    billboardGui.Size = UDim2.new(0, 200, 0, 50) -- Fixed size (adjust as needed)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Adjust offset as needed
+    billboardGui.AlwaysOnTop = true
+
+    -- Create a TextLabel for the name
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Text = playerName -- Display player's name
+    textLabel.Size = UDim2.new(1, 0, 1, 0) -- Full size
+    textLabel.TextColor3 = Color3.new(1, 0, 0) -- Red color for the name tag
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextScaled = true
+    textLabel.Parent = billboardGui
+
+    -- Add the BillboardGui to the character's head
+    billboardGui.Parent = character:WaitForChild("Head")
+end
+
+-- Function to handle new players joining
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function(character)
+        character:WaitForChild("Head") -- Ensure the head is loaded
+        createNameTag(character, player.Name) -- Create the name tag for the player
+    end)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        createNameTag(player.Character, player.Name) -- Create the name tag for the player
+    end
+end
+
+-- Get the Players service
+local Players = game:GetService("Players")
+
+-- Connect to existing players
+for _, player in pairs(Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+-- Connect to players joining the game
+Players.PlayerAdded:Connect(onPlayerAdded)
